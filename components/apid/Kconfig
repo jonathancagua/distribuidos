@@ -1,9 +1,9 @@
-menu "EZM FLASH"
+menu "IDS"
 	
-	config EZM_FLASH_LOG_ASSOCIATION
-		bool "Enable Log for FLASH component"
+	config IDS_LOG
+		bool "Enable Log for ids component"
 		default y
 		help 
-			Enable FLASH Log
+			Enable IDS Log
 
 endmenu

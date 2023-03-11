@@ -1000,10 +1000,10 @@ CONFIG_WPA_MBEDTLS_CRYPTO=y
 # end of Supplicant
 
 #
-# EZM FLASH
+# IDS
 #
-CONFIG_EZM_FLASH_LOG_ASSOCIATION=y
-# end of EZM FLASH
+CONFIG_IDS_LOG=y
+# end of IDS
 # end of Component config
 
 #
