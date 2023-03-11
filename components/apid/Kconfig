@@ -1,0 +1,9 @@
+menu "EZM FLASH"
+	
+	config EZM_FLASH_LOG_ASSOCIATION
+		bool "Enable Log for FLASH component"
+		default y
+		help 
+			Enable FLASH Log
+
+endmenu

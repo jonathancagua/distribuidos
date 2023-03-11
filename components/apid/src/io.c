@@ -10,7 +10,7 @@
 #include "sdkconfig.h"
 
 /* APID */
-#include "../config.h"
+#include "../include/config.h"
 #include "../include/io.h"
 
 /* TAGs */

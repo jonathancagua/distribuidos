@@ -16,7 +16,7 @@
 #include "config.h"
 
 /* Nivel de abstracción APID */
-#include "io.h"
-#include "crono.h"
+#include "../components/apid/include/io.h"
+#include "../components/apid/include/crono.h"
 
 #endif /* MAIN_H_ */
