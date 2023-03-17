@@ -11,12 +11,17 @@ void app_main(void)
   /* Inicializaciones */
   IO_gpioInit();
   int i = 0;
-
+  WIFI_init();
+  MQTT_init();
+  int rssi;
+  char msg[50];
   while(1){
     /* Loop */
-    IO_toggleLed();
-    CRONO_delayMs(300);
-    ESP_LOGI(TAG, "%i", i++);
+	  rssi = WIFI_getRSSI();
+	  sprintf(msg,"%i",rssi);
+	  MQTT_publish("test/topic1", msg);
+	  CRONO_delayMs(1000);
+    ESP_LOGI(TAG, "test/topic");
   }
 
 }

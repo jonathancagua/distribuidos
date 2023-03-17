@@ -34,7 +34,6 @@ void IO_gpioInit(){
   ESP_LOGI(TAG, "GPIO %d MODE %d ",BLINK_GPIO , GPIO_MODE_OUTPUT );
   gpio_set_level(BLINK_GPIO, 0);
 
-
 }
 
 /******************************************************************************

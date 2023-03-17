@@ -16,6 +16,8 @@
 #include "config.h"
 
 /* Nivel de abstracción APID */
+#include "../components/apid/include/mqtt.h"
+#include "../components/apid/include/wifi.h"
 #include "../components/apid/include/io.h"
 #include "../components/apid/include/crono.h"
 

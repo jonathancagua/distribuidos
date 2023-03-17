@@ -121,10 +121,16 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example Configuration
+# Práctica 1 Configuration
 #
 CONFIG_BLINK_GPIO=2
-# end of Example Configuration
+CONFIG_ESP_WIFI_SSID="Nombre de la red"
+CONFIG_ESP_WIFI_PASS="Password de la red"
+CONFIG_PORT_MQTT=1883
+CONFIG_IP_BROKER_MQTT="test.mosquitto.org"
+CONFIG_TEST_DELAY_MS=500
+CONFIG_TEST_MESSAGE="Message from menuconfig"
+# end of Práctica 1 Configuration
 
 #
 # Compiler options

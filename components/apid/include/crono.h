@@ -10,7 +10,7 @@
 
 // Delays/Sleeps
 void CRONO_delayMs(int);
-void CRONO_sleepMs(uint64_t);
+
 // Timers
 
 // SNTP
