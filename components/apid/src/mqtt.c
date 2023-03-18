@@ -66,6 +66,10 @@ void MQTT_publish(const char * topic, const char * mensaje) {
    /* Acciones a ejecutar para cada topic recibido */
 
    // Ingresar código aquí
+	 if(strcmp("test/ledjc", topic)==0) {
+	  printf("MQTT: Mensaje recibido: %s\n", data);
+	  IO_toggleLed();
+	 }
 
  }
 
