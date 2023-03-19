@@ -18,7 +18,7 @@
 
 /* TAGs */
 static const char *TAG = "MQTT";
-
+static mqtt_topic_handler_f pFunction = NULL;
 /********************************** MQTT **************************************/
 
 /* Definiciones */
@@ -40,6 +40,15 @@ MQTT_subscribe(): Subscripción al topic especificado.
 void MQTT_subscribe(const char * topic){
 
   esp_mqtt_client_subscribe(client, topic, 0);
+
+}
+
+/*******************************************************************************
+MQTT_subscribe(): Subscripción al topic especificado.
+*******************************************************************************/
+void MQTT_subscribe_handler(mqtt_topic_handler_f funcion){
+
+	pFunction = funcion;
 
 }
 
@@ -66,10 +75,10 @@ void MQTT_publish(const char * topic, const char * mensaje) {
    /* Acciones a ejecutar para cada topic recibido */
 
    // Ingresar código aquí
-	 if(strcmp("test/ledjc", topic)==0) {
+	/* if(strcmp("test/ledjc", topic)==0) {
 	  printf("MQTT: Mensaje recibido: %s\n", data);
 	  IO_toggleLed();
-	 }
+	 }*/
 
  }
 
@@ -140,6 +149,8 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
                 strncpy(rcv_message, event->data, event->data_len);
                 //ESP_LOGI(TAG, "TOPIC RECEIVED: %s", rcv_topic );
                 //ESP_LOGI(TAG, "MESSAGE RECEIVED: %s", rcv_message);
+                if(pFunction != NULL)
+                	pFunction(rcv_topic, rcv_message);
                 MQTT_processTopic(rcv_topic, rcv_message);
                 break;
 
