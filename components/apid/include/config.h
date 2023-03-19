@@ -7,8 +7,8 @@
 #define CONFIG_H_
 
 /* configuración WIFI */
-#define ESP_WIFI_SSID "EASYMETERING 2.4"     // CONFIG_ESP_WIFI_SSID  // "SSID wifi"
-#define ESP_WIFI_PASS "ezm12345" // CONFIG_ESP_WIFI_PASS  // "pass wifi"
+#define ESP_WIFI_SSID "Cagua"     // CONFIG_ESP_WIFI_SSID  // "SSID wifi"
+#define ESP_WIFI_PASS "cagua" // CONFIG_ESP_WIFI_PASS  // "pass wifi"
 
 /*  Configuracion MQTT  */
 #define PORT_MQTT 1883            //CONFIG_PORT_MQTT      // default
