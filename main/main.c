@@ -12,13 +12,15 @@ static const char* topico_rss = "test/topicjc";
 void funcion(const char * topic, const char * data){
 	if(strcmp(topico , topic)==0) {
 		printf("MQTT: Mensaje recibido: %s\n", data);
-		if(strcmp("encendido" , topic)==0) {
+		if(strcmp("encendido" , data)==0) {
 			bandera = true;
 			IO_setLed(1);
+			ESP_LOGE(TAG, "ENCENDIDO");
 		}
-		else if(strcmp("apagado" , topic)==0) {
+		else if(strcmp("apagado" , data)==0) {
 			bandera = false;
 			IO_setLed(0);
+			ESP_LOGE(TAG, "APAGADO");
 		}
 		else{
 			ESP_LOGE(TAG, "mensaje no valido test/topic");

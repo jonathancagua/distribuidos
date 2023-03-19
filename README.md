@@ -17,3 +17,7 @@ Delay:    Se define el valor de un delay de proposito general desde el menuconfi
 
 Mensaje:  Se define un mensaje de proposito general desde el menuconfig. En la aplicación
           debe llamarse como CONFIG_TEST_MESSAGE
+
+
+SHELL:
+/usr/local/sbin/mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf
