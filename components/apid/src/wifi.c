@@ -9,6 +9,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_wifi.h"
+#include "esp_wifi_types.h"
 #include "esp_log.h"
 #include "esp_event.h"
 #include "nvs_flash.h"
@@ -16,6 +17,7 @@
 /* APID */
 #include "../include/config.h"
 #include "../include/wifi.h"
+#include "../include/sd.h"
 
 /* TAGs */
 static const char *TAG = "WIFI";
@@ -27,7 +29,7 @@ wifi_ap_record_t wifidata;
 static int s_retry_num = 0;
 static void event_handler(void* , esp_event_base_t, int32_t, void* );
 static char ip_addr[LENGTH_STR_IP+1]="0.0.0.0"; // extern char dir_ip[20];
-
+const char probar[10]="prueba";
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -63,9 +65,22 @@ int8_t WIFI_getRSSI(){
 
 /******************************************************************************
 WIFI_init(): conexión a la WiFi especificada según la configuración de SSID y PASS
+Esta inicialización toma los parámetros por defectos definidos en "config.h"
 *******************************************************************************/
-void WIFI_init()
-{
+void WIFI_init(){
+
+  // ssid y pass definidos por defecto en "config.h"
+  printf("SSID VER: %s", ESP_WIFI_SSID);
+  WIFI_userInit(ESP_WIFI_SSID, ESP_WIFI_PASS);
+
+}
+
+/******************************************************************************
+WIFI_userInit(): conexión a la WiFi especificada según la configuración de SSID y PASS
+tomando como parámetros los definidos por el usuario (por ejemplo desde la memoria SD).
+*******************************************************************************/
+void WIFI_userInit(const  char * ssid, const  char * pass){
+    printf("SSID VER: %s", ssid);
     //Initialize NVS (pre Connect)
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -98,14 +113,17 @@ void WIFI_init()
 
     wifi_config_t wifi_config = {
             .sta = {
-                    .ssid = ESP_WIFI_SSID,
-                    .password = ESP_WIFI_PASS,
+                    .ssid = ESP_WIFI_SSID,      // por defecto
+                    .password = ESP_WIFI_PASS,  // por defecto
                     .pmf_cfg = {
                             .capable = true,
                             .required = false
                     },
             },
     };
+
+    memcpy(wifi_config.sta.ssid, ssid, strlen(ssid)+1);
+    memcpy(wifi_config.sta.password, pass, strlen(pass)+1);
 
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );

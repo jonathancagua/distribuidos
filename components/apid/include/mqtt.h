@@ -9,6 +9,7 @@
 typedef void (*mqtt_topic_handler_f)   (const char * topic, const char * data);
 /* Prototipos */
 void MQTT_init(void);
+void MQTT_userInit(const char * );
 void MQTT_processTopic(const char * , const char * );
 void MQTT_subscribe(const char * );
 void MQTT_publish(const char * , const char * );

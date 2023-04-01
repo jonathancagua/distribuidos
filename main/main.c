@@ -1,5 +1,6 @@
 
 #include "main.h"
+#include "driver/gpio.h"
 #include "config.h"
 
 const char *TAG = "MAIN";
@@ -30,6 +31,7 @@ void funcion(const char * topic, const char * data){
 void app_main(void)
 {
 	/* Inicializaciones */
+  #if 0
 	int i = 0;
 	WIFI_init();
 	IO_gpioInit();
@@ -50,5 +52,48 @@ void app_main(void)
 		CRONO_delayMs(500);
 
 	}
+#endif
+	/*WIFI_userInit("jcagua" ,"ezm");
+	MQTT_userInit("test.mosquitto.org");
+	CRONO_sntpInit();
+	char timestamp[64]="";
+	int64_t epoch;*/
+	//gpio_set_pull_mode(GPIO_NUM_19, GPIO_PULLUP_ONLY);
+	//gpio_set_pull_mode(GPIO_NUM_15, GPIO_PULLUP_ONLY);
+	SD_mount();
+	/*FILE *f = SD_open("usuario.txt", "r");
+	char delay_milis[32];
+	char user_message[200];
+
+	SD_gets(f, delay_milis, sizeof(delay_milis));
+	SD_gets(f, user_message, sizeof(user_message));
+	SD_close(f);
+	int d = atoi(delay_milis);*/
+
+	/*
+	f = SD_open("tiempos.txt", "w");
+	SD_printf(f, "Lectura de diferentes tiempos de formatos ");
+	for (int var = 0; int var < 50; ++int var) {
+		epoch = CRONO_getTime(timestamp, sizeof(timestamp));
+		SD_printf(f, "epoch %lli -- Timestamp %s",epoch, timestamp);
+		CRONO_delayMs(500);
+	}
+	*/
+	while(1){
+		CRONO_delayMs(1000);
+		/*
+		CRONO_delayMs(d);
+
+		MQTT_publish("test/%s ", user_message);
+		printf("MAIN: Mensaje %s: \n", user_message);
+		printf("MAIN: Delay %i \n'", d);*/
+/*
+		epoch = CRONO_getTime(timestamp, sizeof(timestamp));
+		printf("MAIN: Timestamp %s: \n", timestamp);
+		printf("MAIN: Epoch %lli: \n'", epoch);*/
+	}
+
+	// All done, unmount partition and disable SDMMC or SPI peripheral
+	//SD_unmount();
 
 }

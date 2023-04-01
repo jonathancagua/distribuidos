@@ -20,5 +20,5 @@
 #include "../components/apid/include/wifi.h"
 #include "../components/apid/include/io.h"
 #include "../components/apid/include/crono.h"
-
+#include "../components/apid/include/sd.h"
 #endif /* MAIN_H_ */

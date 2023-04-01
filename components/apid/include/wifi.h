@@ -8,6 +8,7 @@
 
 /* Prototipos */
 void WIFI_init();
+void WIFI_userInit(const char * , const char * );
 int8_t WIFI_getRSSI();
 int WIFI_getIP(char * );
 
@@ -19,5 +20,8 @@ int WIFI_getIP(char * );
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 #define LENGTH_STR_IP 15
+
+#define MAX_WIFI_SSID_LENGTH 32
+#define MAX_WIFI_PASS_LENGTH 64
 
 #endif /* WIFI_H_ */

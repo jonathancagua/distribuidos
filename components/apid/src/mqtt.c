@@ -19,6 +19,7 @@
 /* TAGs */
 static const char *TAG = "MQTT";
 static mqtt_topic_handler_f pFunction = NULL;
+const char* mqtt_broker_default = IP_BROKER_MQTT;
 /********************************** MQTT **************************************/
 
 /* Definiciones */
@@ -26,13 +27,11 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t);
 static void mqtt_event_handler(void *, esp_event_base_t , int32_t , void *);
 const char* mqtt_server = IP_BROKER_MQTT;
 const int mqttPort = PORT_MQTT;
-const char* mqttUser = USER_MQTT;
-const char* mqttPassword = PASSWD_MQTT;
 static esp_mqtt_client_handle_t client;
 esp_mqtt_client_handle_t MQTT_getClient(void);
 
 // parámetros Wifi
-extern wifi_ap_record_t wifidata;
+//extern wifi_ap_record_t wifidata;
 
 /*******************************************************************************
 MQTT_subscribe(): Subscripción al topic especificado.
@@ -70,7 +69,7 @@ void MQTT_publish(const char * topic, const char * mensaje) {
 /*******************************************************************************
  MQTT_processTopic(): lee el mensaje MQTT recibido cuando se dispara el evento
  ******************************************************************************/
- void MQTT_processTopic(const char * topic, const char * data){
+ void MQTT_processTopic(const char * topic, const char * msg){
 
    /* Acciones a ejecutar para cada topic recibido */
 
@@ -86,15 +85,24 @@ void MQTT_publish(const char * topic, const char * mensaje) {
  /*******************************************************************************
   MQTT_init(): Inicialización de MQTT
   ******************************************************************************/
- void MQTT_init(void){
+ void MQTT_init(){
+
+  MQTT_userInit(mqtt_broker_default);
+
+ }
+ /*******************************************************************************
+ MQTT_userIinit(): Inicializaci�n de MQTT definida por el usuario desde un archivo
+  ******************************************************************************/
+ void MQTT_userInit(const char * mqtt_broker){
 
    esp_mqtt_client_config_t mqtt_cfg = {
            //.uri = CONFIG_BROKER_URL,
-           .host= mqtt_server,
+           .host = mqtt_broker,//server,
            //.username = mqttUser,
            //.password = mqttPassword,
            .port = mqttPort,
    };
+
 
    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
    client = esp_mqtt_client_init(&mqtt_cfg); //   Creates mqtt client handle based on the configuration.
@@ -103,7 +111,6 @@ void MQTT_publish(const char * topic, const char * mensaje) {
    vTaskDelay(50 / portTICK_PERIOD_MS); // waiting 50 ms
 
  }
-
  /* handle cliente MQTT ************************************************/
  esp_mqtt_client_handle_t MQTT_getClient(void)
  {
