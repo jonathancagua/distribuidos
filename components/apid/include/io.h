@@ -1,6 +1,6 @@
 /** \file io.h
  *  Mar 2022
- *  Maestría en SIstemas Embebidos - Sistemas embebidos distribuidos
+ *  Maestría en SIstemas Embebidos
  */
 
 #ifndef IO_H_
@@ -10,5 +10,16 @@
 void IO_gpioInit();
 int IO_setLed(int);
 void IO_toggleLed(void);
+
+void IO_adcInit();
+uint16_t IO_readAdc();
+uint32_t IO_voltAdc();
+
+void IO_monitorGraph(int);
+void IO_monitorPause(const char *);
+
+
+void IO_pwmInit(void);
+void IO_pwmSet(float);
 
 #endif /* IO_H_ */

@@ -1,11 +1,12 @@
 /** \file	crono.c
  *  Feb 2022
- *  Maestría en Sistemas Embebidos - Sistemas emebebidos distribuidos
+ *  Maestría en Sistemas Embebidos
  * \brief Contiene las funciones para manejo de tiempos y reloj del sistema */
 
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include <sys/time.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -16,14 +17,70 @@
 #include "esp_timer.h"
 #include "esp_sleep.h"
 #include "sdkconfig.h"
-
+#include <math.h>
 /*  APID  */
 #include "../include/config.h"
 #include "../include/crono.h"
+#include "../include/io.h"
 
 /* TAGs */
 static const char *TAG1 = "CRONO/TIMER";
 static const char *TAG2 = "CRONO/SNTP";
+
+extern volatile int samples[SAMPLES_SIZE];
+extern volatile int n;
+/********************************** TIMER *************************************/
+
+esp_timer_handle_t periodic_timer;
+
+/*****************************************************************************
+ CRONO_timerCallback(void* arg): callback para la interrpción de timer.
+*******************************************************************************/
+static void CRONO_timerCallback(void* arg)
+{
+   if(n<SAMPLES_SIZE){
+	 samples[n] = IO_readAdc();
+	 n++;
+   }
+}
+
+/*****************************************************************************
+ CRONO_timerInit(): inicialización del temporizador de alta presición.
+*******************************************************************************/
+void CRONO_timerInit(){
+
+  const esp_timer_create_args_t periodic_timer_args = {
+          .callback = &CRONO_timerCallback,
+          /* name is optional, but may help identify the timer when debugging */
+          .name = "periodic"
+  };
+
+  ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
+  /* The timer has been created but is not running yet */
+
+}
+
+/*****************************************************************************
+ CRONO_timerStart(): arranca el temporizador periodico con un periodo de interrupción
+"interval_ms" en milisegundos.
+IMPORTANTE: no volver a ejecutar esta función si el timer ya está corriendo.
+Para reiniciar el timer, primero debe detenerse con CRONO_timerStop().
+*******************************************************************************/
+void CRONO_timerStart(uint64_t interval_ms){
+
+  ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, interval_ms * 1000));
+  ESP_LOGI(TAG1, "Started timers, time since boot: %lld us", esp_timer_get_time());
+
+}
+
+/*****************************************************************************
+CRONO_timerStop(): detiene el temporizador periodico.
+*******************************************************************************/
+void CRONO_timerStop(void){
+
+  esp_timer_stop(periodic_timer);
+
+}
 
 
 /**************************** DELAYs & SLEEPs *********************************/
@@ -60,7 +117,7 @@ RTC_DATA_ATTR static int boot_count = 0;
 CRONO_getTime(): Lectura de tiempo actual. Recibe un puntero para devolver por
 referencia una cadena "timebuff" que contendrá la información de tiempo en formato
 texto, y un entero "timebuff_size" que indica el largo máximo reservado en el
-buffer. Además, devuelve un entero con la marca de tiempo en formato EPOCH.
+buffer. Además, devuelve un entero con la marca de tiempo en formato EPOCH (en milisegundos).
 *******************************************************************************/
 int64_t CRONO_getTime(char * timebuff, int timebuff_size)
 {
@@ -74,7 +131,9 @@ int64_t CRONO_getTime(char * timebuff, int timebuff_size)
   time(&now);
 
   localtime_r(&now, &timeinfo);
-  strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+  //strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+  strftime(strftime_buf, sizeof(strftime_buf), "%Y%m%d%H%M%S", &timeinfo);
+
   /* strftime(): TIMESTAMP FORMATs: https://www.cplusplus.com/reference/ctime/strftime/ */
 
   strcpy(timebuff, strftime_buf);
@@ -86,7 +145,7 @@ int64_t CRONO_getTime(char * timebuff, int timebuff_size)
 
   /*  Return UNIX Epoch in seconds (started in 1970)  */
   //return tv.tv_sec * (int64_t)1e6;   // Seconds
-  return tv.tv_sec * (int64_t)1e3 + (int64_t)(tv.tv_usec/1e3); // micro-Seconds
+  return tv.tv_sec * (int64_t)1e3 + (int64_t)(tv.tv_usec/1e3); // mili-Seconds
   //return tv.tv_sec * (int64_t)1e6 + tv.tv_usec; // micro-Seconds
 
 }

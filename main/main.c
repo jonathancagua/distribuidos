@@ -1,16 +1,19 @@
 
 #include "main.h"
 #include "driver/gpio.h"
-#include "config.h"
 
 const char *TAG = "MAIN";
 static bool bandera = false;
 static const char* topico = "test/ledjc";
 static const char* topico_rss = "test/topicjc";
+static const char* topico_ldr = "test/topicjc";
+volatile int samples[SAMPLES_SIZE];
+volatile int n = 0;
 void app_1(void);
 void app_2(void);
 void app_3(void);
 void app_4(void);
+void app_5(void);
 /*******************************************************************************
  Programa principal
 ******************************************************************************/
@@ -37,7 +40,7 @@ void funcion(const char * topic, const char * data){
 void app_main(void)
 {
 
-	app_4();
+	app_5();
 
 }
 void app_0(){
@@ -213,6 +216,105 @@ void app_4(void)
 			}
 		}
 		CRONO_delayMs(1000);
+	}
+
+	SD_unmount();
+
+}
+
+void app_6(void)
+{
+	IO_adcInit();
+	IO_gpioInit();
+	IO_pwmInit();
+	CRONO_timerInit();
+
+	int x;
+
+
+	CRONO_timerStart(10);
+	while(n<SAMPLES_SIZE){
+		printf("GRABANDO: %i muestras de %i\n", n, SAMPLES_SIZE);
+		CRONO_delayMs(500);
+	}
+	CRONO_timerStop();
+	printf("GRABACIÓN FINALIZADA\n");
+
+	CRONO_delayMs(250);
+
+	printf("INICIANDO REPRODUCCIÓN\n");
+	for(n=0;n<SAMPLES_SIZE;n++){
+	   IO_pwmSet(samples[n] / 4096.0 *100);
+	   IO_monitorGraph(samples[n]);
+	   CRONO_delayMs(10);
+	}
+	IO_pwmSet(0);
+	printf("REPRODUCCIÓN FINALIZADA\n");
+	n = 0;
+
+	while(1){
+		/*x = IO_readAdc();
+		CRONO_delayMs(250);
+		ESP_LOGE(TAG, "Sensor %i ", x);*/
+
+		printf("FINLALIZADO: %i\n", n++);
+		IO_toggleLed();
+		CRONO_delayMs(1000);
+	}
+}
+
+//20 ms 50hz
+//
+void app_5(void)
+{
+
+	SD_mount();
+
+	char timestamp[64]="";
+	char msg_ldr[100];
+	char msg[100];
+	int muestreo = 50;
+	int64_t epoch;
+	WIFI_init();
+	CRONO_timerInit();
+	IO_adcInit();
+
+	MQTT_init();
+	MQTT_subscribe_handler(&funcion);
+	MQTT_subscribe(topico);
+	MQTT_publish(topico, "apagado");
+
+	CRONO_sntpInit();
+	epoch = CRONO_getTime(timestamp, sizeof(timestamp));
+	sprintf(msg,"%s.csv",timestamp);
+	ESP_LOGI(TAG, "%s",msg);
+	FILE *f = SD_open(msg, "w");
+	while(1){
+		if(true == bandera){
+			CRONO_timerStart(20);
+			while(true == bandera){
+				sprintf(msg_ldr,"%d", samples[n-1]);
+				MQTT_publish(topico_ldr, msg_ldr);
+				printf("Index %i , valor = %d muestras de %i\n",n,samples[n-1], SAMPLES_SIZE);
+				if(n == SAMPLES_SIZE){
+					break;
+				}
+				CRONO_delayMs(500);
+			}
+			bandera = false;
+			CRONO_timerStop();
+			ESP_LOGE(TAG, "Desactivado muestreo");
+			for(int i = 0; i< n;i++)
+				SD_printf(f, "%d\n", samples[i]);
+			ESP_LOGE(TAG, "Terminado de grabar");
+			MQTT_publish(topico, "apagado");
+			SD_close(f);
+			n = 0;
+		}
+		else{
+			CRONO_delayMs(1000);
+		}
+
 	}
 
 	SD_unmount();

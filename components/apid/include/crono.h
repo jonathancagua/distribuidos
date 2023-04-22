@@ -1,6 +1,6 @@
 /** \file crono.h
  *  Mar 2022
- *  Maestría en SIstemas Embebidos - Sistemas embebidos distribuidos
+ *  Maestría en SIstemas Embebidos 
  */
 
 #ifndef CRONO_H
@@ -8,6 +8,9 @@
 
 /* Prototipos */
 // Timers
+void CRONO_timerInit(void);
+void CRONO_timerStart(uint64_t);
+void CRONO_timerStop(void);
 
 // Delays/Sleeps
 void CRONO_delayMs(int);

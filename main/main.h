@@ -13,7 +13,7 @@
 #include "sdkconfig.h"
 
 /* Configuración general  */
-#include "config.h"
+#include "../components/apid/include/config.h"
 
 /* Nivel de abstracción APID */
 #include "../components/apid/include/mqtt.h"
